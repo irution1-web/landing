@@ -486,7 +486,6 @@
   .final-cta .cta-sub{margin-top:12px; color:rgba(255,255,255,0.6);}
 
   footer{border-top:1px solid var(--line); padding:36px 0 110px; color:var(--muted); font-size:12px; line-height:1.9; text-align:center;}
-  .admin-link{background:none; border:none; color:var(--muted); font-size:12.5px; cursor:pointer; text-decoration:underline; font-family:inherit; padding:0; margin-top:14px; display:inline-block;}
 
   /* MOBILE STICKY CTA */
   .sticky-cta{
@@ -505,25 +504,6 @@
   .sticky-cta.show{display:flex;}
   @media (min-width:761px){ .sticky-cta{display:none !important;} footer{padding-bottom:40px;} }
 
-  /* ADMIN */
-  .admin-overlay{
-    display:none; position:fixed; inset:0; background:rgba(10,14,20,0.62); backdrop-filter:blur(4px);
-    z-index:100; align-items:flex-start; justify-content:center; padding:60px 20px; overflow:auto;
-  }
-  .admin-overlay.open{display:flex;}
-  .admin-panel{background:#fff; border:1px solid var(--line-strong); border-radius:var(--r-lg); padding:26px; width:100%; max-width:1000px; box-shadow:var(--shadow-lg);}
-  .admin-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;}
-  .admin-head h3{margin:0; font-size:18px;}
-  .admin-actions{display:flex; gap:10px; flex-wrap:nowrap; overflow-x:auto;}
-  .admin-actions button{background:transparent; border:1px solid var(--line-strong); color:var(--ink); padding:8px 14px; border-radius:var(--r-sm); font-size:13px; cursor:pointer; font-family:inherit; white-space:nowrap; flex:0 0 auto; transition:border-color .15s, background .15s;}
-  .admin-actions button:hover{border-color:var(--accent); background:var(--accent-wash);}
-  .admin-warning{font-size:12.5px; color:#b45309; margin:0 0 16px; padding:10px 12px; background:#fff7ed; border:1px solid #fed7aa; border-radius:var(--r-sm);}
-  .table-scroll{overflow-x:auto;}
-  table{width:100%; border-collapse:collapse; font-size:13px;}
-  th,td{text-align:left; padding:9px 8px; border-bottom:1px solid var(--line); vertical-align:top; white-space:nowrap;}
-  td.wrap-cell{white-space:normal; min-width:180px; max-width:280px;}
-  th{color:var(--muted); font-weight:500; font-size:12px;}
-  .empty-note{color:var(--muted); font-size:14px; padding:16px 0; white-space:normal;}
 
   @media (max-width:820px){
     .report-wrap{grid-template-columns:1fr; gap:28px;}
@@ -947,7 +927,6 @@
   <div class="wrap">
     네이버 마케팅 연구소 · 문의 010-8464-8304<br>
     본 서비스는 네이버(주)와 무관한 독립 마케팅 상담 서비스입니다.
-    <br><button class="admin-link" onclick="openAdmin()">신청 내역 보기 (관리자)</button>
   </div>
 </footer>
 
@@ -956,21 +935,6 @@
   <button class="s-go" onclick="goForm()">무료 상세분석 상담 신청</button>
 </div>
 
-<div class="admin-overlay" id="adminOverlay">
-  <div class="admin-panel">
-    <div class="admin-head">
-      <h3>상담 신청 내역</h3>
-      <div class="admin-actions">
-        <button onclick="addTestLead()">테스트 데이터 추가</button>
-        <button onclick="clearAllLeads()">전체 삭제</button>
-        <button onclick="exportCsv()">CSV 다운로드</button>
-        <button onclick="closeAdmin()">닫기</button>
-      </div>
-    </div>
-    <p class="admin-warning">이 내역은 브라우저 저장소에 보관되며 실제 운영 환경에서는 신청자별 브라우저에만 남습니다. 접수 데이터는 구글 시트 연동(SHEET_WEBHOOK_URL)으로 받으시고, 이 패널은 확인용으로만 사용하세요.</p>
-    <div class="table-scroll" id="adminBody"><p class="empty-note">불러오는 중…</p></div>
-  </div>
-</div>
 
 <script>
 const STORAGE_KEY = 'naverplace_leads_v2';
@@ -1155,82 +1119,6 @@ function escapeHtml(str){
   return d.innerHTML;
 }
 
-async function openAdmin(){
-  document.getElementById('adminOverlay').classList.add('open');
-  const body = document.getElementById('adminBody');
-  body.innerHTML = '<p class="empty-note">불러오는 중…</p>';
-  const leads = await getLeads();
-  if(!leads.length){
-    body.innerHTML = '<p class="empty-note">아직 접수된 신청이 없어요.</p>';
-    return;
-  }
-  const rows = leads.slice().reverse().map(l=>`
-    <tr>
-      <td>${escapeHtml(l.storeName||'-')}</td>
-      <td class="wrap-cell">${l.placeUrl ? `<a href="${escapeHtml(l.placeUrl)}" target="_blank" rel="noopener">${escapeHtml(l.placeUrl)}</a>` : '-'}</td>
-      <td>${escapeHtml(l.bizType||'-')}</td>
-      <td class="wrap-cell">${escapeHtml(l.keywords||'-')}</td>
-      <td class="wrap-cell">${escapeHtml((l.concerns||[]).join(', ')||'-')}</td>
-      <td class="wrap-cell">${escapeHtml(l.memo||'-')}</td>
-      <td>${escapeHtml(l.ownerName)}</td>
-      <td>${escapeHtml(l.phone)}</td>
-      <td>${new Date(l.submittedAt).toLocaleString('ko-KR')}</td>
-    </tr>
-  `).join('');
-  body.innerHTML = `
-    <table>
-      <thead><tr><th>업체명</th><th>플레이스 주소</th><th>업종</th><th>지역·키워드</th><th>궁금한 점</th><th>현재 고민</th><th>이름</th><th>연락처</th><th>신청시각</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
-}
-function closeAdmin(){ document.getElementById('adminOverlay').classList.remove('open'); }
-document.getElementById('adminOverlay').addEventListener('click', e=>{ if(e.target.id==='adminOverlay') closeAdmin(); });
-
-async function addTestLead(){
-  try{
-    const leads = await getLeads();
-    leads.push({
-      id: 'test-' + Date.now().toString(36),
-      bizType: '음식점/카페/베이커리',
-      concerns: ['키워드 구성', '경쟁 업체 비교'],
-      storeName: '[테스트] 행복분식',
-      placeUrl: 'https://naver.me/xxxxxxxx',
-      keywords: '일산 분식, 백석동 떡볶이',
-      memo: '광고를 해도 방문이 안 늘어요.',
-      ownerName: '테스트',
-      phone: '01000000000',
-      submittedAt: new Date().toISOString()
-    });
-    await saveLeads(leads);
-    openAdmin();
-  }catch(err){
-    alert('테스트 데이터 추가 중 문제가 발생했어요.');
-  }
-}
-
-async function clearAllLeads(){
-  if(!confirm('저장된 신청 내역을 전부 삭제할까요? 되돌릴 수 없어요.')) return;
-  try{
-    await saveLeads([]);
-    openAdmin();
-  }catch(err){
-    alert('삭제 중 문제가 발생했어요.');
-  }
-}
-
-async function exportCsv(){
-  const leads = await getLeads();
-  if(!leads.length) return;
-  const header = ['업체명','플레이스 주소','업종','지역·키워드','궁금한 점','현재 고민','이름','연락처','신청시각'];
-  const rows = leads.map(l=>[l.storeName,l.placeUrl,l.bizType,l.keywords,(l.concerns||[]).join(' / '),l.memo,l.ownerName,l.phone,l.submittedAt]);
-  const csv = [header, ...rows].map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'naverplace_leads.csv'; a.click();
-  URL.revokeObjectURL(url);
-}
 
 /* 실시간 신청현황 (데모 피드) */
 function maskPhone(phone){
