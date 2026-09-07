@@ -532,6 +532,22 @@
     .diff-item{padding:22px 20px;}
   }
 </style>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1455854152991361');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1455854152991361&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
 </head>
 <body>
 
@@ -1027,7 +1043,13 @@ wireMultiOptionGroup('concerns','next2', vals=> state.concerns = vals);
   url.addEventListener('input', check);
 })();
 
-document.getElementById('next1').addEventListener('click', ()=> setActiveStep(2));
+document.getElementById('next1').addEventListener('click', ()=>{
+  setActiveStep(2);
+  if(typeof fbq === 'function' && !window.__fbFormStart){
+    window.__fbFormStart = true;
+    fbq('trackCustom', 'FormStart', { biz_type: state.bizType });
+  }
+});
 document.getElementById('next2').addEventListener('click', ()=> setActiveStep(3));
 document.getElementById('next3').addEventListener('click', ()=> setActiveStep(4));
 
@@ -1105,6 +1127,9 @@ document.getElementById('funnelForm').addEventListener('submit', async function(
     document.getElementById('progressRow').style.display = 'none';
     document.getElementById('formPromo').style.display = 'none';
     document.getElementById('successView').style.display = 'block';
+    if(typeof fbq === 'function'){
+      fbq('track', 'Lead', { content_name: '플레이스 상세분석 상담', content_category: state.bizType });
+    }
   }catch(err){
     msg.textContent = '저장 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.';
     msg.classList.add('show');
