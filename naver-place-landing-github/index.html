@@ -940,7 +940,7 @@
 const STORAGE_KEY = 'naverplace_leads_v2';
 
 // ↓↓↓ 구글 시트 연동: Apps Script 배포 후 나오는 웹앱 URL을 여기에 붙여넣으세요.
-const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzaKZlVem_KRS4nIBWAo9Lt4dHvKZQ2BATfCp2cVIC9naQUxoXwsloY497CMLo8qUX5Cw/exec';
+const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxaoSXBkRuPG1wbaghbeNrPTb4AUc6k41qVtPQNtQFR3CRIVWIpjNOlpMowYEL67xm9Qw/exec';
 
 async function sendToGoogleSheet(lead){
   if(!SHEET_WEBHOOK_URL || SHEET_WEBHOOK_URL.includes('PASTE_YOUR')) return;
