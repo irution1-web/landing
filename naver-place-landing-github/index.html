@@ -33,7 +33,7 @@
     --ease:cubic-bezier(.22,.61,.36,1);
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; overflow-x:hidden;}
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font-family:'Noto Sans KR', sans-serif; line-height:1.65;
@@ -271,9 +271,9 @@
   .diff-item p{font-size:14.5px; font-weight:500; color:var(--muted); margin:0; line-height:1.65;}
 
   /* STEP CARD (funnel) */
-  .funnel{padding:72px 0 80px; position:relative; border-top:1px solid var(--line);}
+  .funnel{padding:72px 0 80px; position:relative; border-top:1px solid var(--line); overflow:hidden;}
   .funnel::before{
-    content:''; position:absolute; left:50%; top:20px; width:900px; height:420px; transform:translateX(-50%);
+    content:''; position:absolute; left:50%; top:20px; width:min(900px,100vw); height:420px; transform:translateX(-50%);
     background:radial-gradient(ellipse at center, rgba(47,93,251,0.10), transparent 65%);
     pointer-events:none; z-index:0;
   }
@@ -438,7 +438,7 @@
     background:var(--bg); border-bottom:1px solid var(--line);
   }
   .rank-track{display:flex; transition:transform .6s var(--ease);}
-  .rank-track img{width:100%; flex:0 0 100%; display:block;}
+  .rank-track img{width:100%; flex:0 0 100%; display:block; aspect-ratio:772/229; object-fit:contain; background:#fff;}
   .rc-dots{display:flex; justify-content:center; gap:6px; padding:12px 0 14px;}
   .rc-dots span{width:6px; height:6px; border-radius:6px; background:var(--line-strong); transition:all .3s var(--ease);}
   .rc-dots span.on{width:20px; background:var(--accent);}
@@ -530,6 +530,21 @@
     .faq-q{padding:15px 16px;}
     .faq-a p{padding:0 16px 16px;}
     .diff-item{padding:22px 20px;}
+    /* 실시간 신청현황: 모바일에서 한 화면에 맞추기 */
+    .feed-card{border-radius:var(--r-md);}
+    .feed-table{table-layout:fixed;}
+    .feed-table th:nth-child(1), .feed-table td:nth-child(1){width:15%;}
+    .feed-table th:nth-child(2), .feed-table td:nth-child(2){width:15%;}
+    .feed-table th:nth-child(3), .feed-table td:nth-child(3){width:32%;}
+    .feed-table thead th{font-size:11.5px; padding:11px 4px;}
+    .feed-table tbody td{font-size:12px; padding:11px 4px; white-space:normal;}
+    .biz-badge{font-size:10.5px; padding:4px 8px; white-space:normal; line-height:1.3; word-break:keep-all;}
+    .rank-carousel{border-radius:var(--r-md);}
+    .report-doc{padding:20px 18px;}
+    .hero{padding-bottom:48px;}
+    .benefit{padding:16px 18px;}
+    section.block{padding:56px 0;}
+    .funnel{padding:56px 0 64px;}
   }
 </style>
 <!-- Meta Pixel -->
